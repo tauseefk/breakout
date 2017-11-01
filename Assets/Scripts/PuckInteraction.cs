@@ -1,22 +1,54 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PuckInteraction : MonoBehaviour {
 
-	// Use this for initialization
+	private bool _isTethered = true;
+
+	[System.Serializable]
+	public class DeathEvent : UnityEvent {}
+
+	[SerializeField]
+	private DeathEvent _deathEvent;
+
+	[System.Serializable]
+	public class ScoreEvent : UnityEvent<int> {}
+
+	[SerializeField]
+	private ScoreEvent _scoreEvent;
+
+	private Rigidbody _rb;
+
+	[SerializeField]
+	[Tooltip("Thrust to bounce off the platform")]
+	private float _thrust;
+
 	void Start () {
-		
+		_rb = GetComponent<Rigidbody>();
 	}
 	
-	// Update is called once per frame
 	void Update () {
-		
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			_isTethered = false;
+		}
+	}
+
+	void FixedUpdate()
+	{
+		if (!_isTethered && Mathf.Approximately (_rb.velocity.y, 0.0f)) {
+			gameObject.transform.parent = null;
+			_rb.AddForce(- transform.forward * _thrust);
+		}
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if(LayerMask.NameToLayer("Boundary") == other.gameObject.layer) {
-			Debug.Log("boing!");
+		if(LayerMask.NameToLayer("Death") == other.gameObject.layer) {
+			GameState.decrementLives ();
+			_scoreEvent.Invoke (GameState.lives);
+			_deathEvent.Invoke ();
+			Destroy (gameObject);
 		}
 	}
 }
