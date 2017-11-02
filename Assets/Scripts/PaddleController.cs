@@ -46,11 +46,13 @@ public class PaddleController : MonoBehaviour {
 
 	// The feedback animation can be triggered here 
 	void OnCollisionEnter(Collision other) {
-		if (_animationCoroutine != null) {
-			StopCoroutine (_animationCoroutine);
-			_animationCoroutine = null;
-		} else {
-			// _animationCoroutine = StartCoroutine (TriggerHitAnimation());
+		if(other.gameObject.layer == LayerMask.NameToLayer("Puck")) {
+			if (_animationCoroutine != null) {
+				StopCoroutine (_animationCoroutine);
+				_animationCoroutine = null;
+			} else {
+				// _animationCoroutine = StartCoroutine (TriggerHitAnimation());
+			}
 		}
 	}
 

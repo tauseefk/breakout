@@ -37,6 +37,10 @@ public class PuckInteraction : MonoBehaviour {
 	[SerializeField]
 	private GameObject _fadeToGameOver;
 
+	// Velocity multiplier for collisions with the paddle
+	[SerializeField]
+	private float _velocityMultiplier;
+
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
 	}
@@ -53,12 +57,18 @@ public class PuckInteraction : MonoBehaviour {
 		if (!_isTethered && Mathf.Approximately (_rb.velocity.y, 0.0f)) {
 			gameObject.transform.parent = null;
 
-			// negative force launches it upward
+			// negative force launches it upward, because of the orientation
 			_rb.AddForce(- transform.forward * _thrust);
 		}
 	}
 
-	void OnTriggerEnter(Collider other) {
+	void OnCollisionEnter(Collision other) {
+		// Add horizontal velocity to the puck depending on where it collides with the paddle
+		if(other.gameObject.layer == LayerMask.NameToLayer("Paddle") && !_isTethered) {
+			// Find the vector between the puck and the paddle
+			Vector3 _collisionVector = transform.position - other.transform.position;
+			_rb.velocity += new Vector3(_collisionVector.normalized.x * _velocityMultiplier, 0f, 0f);
+		}
 		// Check collision with the bottom boundary and update lives
 		if(other.gameObject.layer == LayerMask.NameToLayer("Death")) {
 			GameState.decrementLives ();
