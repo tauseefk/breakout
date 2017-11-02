@@ -2,10 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Not using physics for the movement of the paddle because it's unnecessary,
+ * the movement is restricted to only one axis
+ * 
+ */
 public class PaddleController : MonoBehaviour {
 
+	// Velocity of the paddle
 	private Vector3 _velocity;
 
+	// Horizontal speed of the paddle, can be tweaked in the editor
 	[SerializeField]
 	[Tooltip("Horizontal movement speed of the player.")]
 	private float _moveSpeed = 8.0f;
@@ -42,8 +49,10 @@ public class PaddleController : MonoBehaviour {
 		}
 	}
 
+
+	// XXX:TODO The animation that plays when the puck hits the paddle, for user feedback
 	IEnumerator TriggerHitAnimation() {
-		_playerAnimator.SetBool ("inContact", false);
+		_playerAnimator.SetBool ("inContact", true);
 		yield return null;
 	}
 }
