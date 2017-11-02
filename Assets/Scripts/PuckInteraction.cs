@@ -25,6 +25,9 @@ public class PuckInteraction : MonoBehaviour {
 	[Tooltip("Thrust to bounce off the platform")]
 	private float _thrust;
 
+	[SerializeField]
+	private GameObject _fadeToBlack;
+
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
 	}
@@ -47,6 +50,7 @@ public class PuckInteraction : MonoBehaviour {
 		if(LayerMask.NameToLayer("Death") == other.gameObject.layer) {
 			GameState.decrementLives ();
 			_scoreEvent.Invoke (GameState.lives);
+			_fadeToBlack.SetActive (true);
 			_deathEvent.Invoke ();
 			Destroy (gameObject);
 		}
