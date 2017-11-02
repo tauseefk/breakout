@@ -12,6 +12,8 @@ public class PaddleController : MonoBehaviour {
 	// Velocity of the paddle
 	private Vector3 _velocity;
 
+	private float _paddleHorizontalTravel = 16f;
+
 	// Horizontal speed of the paddle, can be tweaked in the editor
 	[SerializeField]
 	[Tooltip("Horizontal movement speed of the player.")]
@@ -35,8 +37,11 @@ public class PaddleController : MonoBehaviour {
 		_velocity.x = input * _moveSpeed;
 
 		// damped by deltaTime to make sure it's cpu speed independent
-		transform.position += _velocity * Time.deltaTime;
-
+		transform.position = new Vector3(
+			// Clamping to make sure the paddle doesn't fly out of the board
+			Mathf.Clamp(transform.position.x + _velocity.x * Time.deltaTime, -_paddleHorizontalTravel/2, _paddleHorizontalTravel/2), 
+			transform.position.y,
+			transform.position.z);
 	}
 
 	// The feedback animation can be triggered here 

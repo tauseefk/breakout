@@ -33,6 +33,10 @@ public class PuckInteraction : MonoBehaviour {
 	[SerializeField]
 	private GameObject _fadeToBlack;
 
+	// Canvas that fades to game over scene
+	[SerializeField]
+	private GameObject _fadeToGameOver;
+
 	void Start () {
 		_rb = GetComponent<Rigidbody>();
 	}
@@ -59,7 +63,17 @@ public class PuckInteraction : MonoBehaviour {
 		if(other.gameObject.layer == LayerMask.NameToLayer("Death")) {
 			GameState.decrementLives ();
 			_scoreEvent.Invoke (GameState.lives);
+
+			// set fade curtain active, reload scene
+			if (GameState.lives > 0) {
+				// _fadeToBlack.SetActive (true);
+			} else {
+				// XXX:TODO create the game over scene
+				// _fadeToGameOver.SetActive (true);
+			}
+
 			_fadeToBlack.SetActive (true);
+
 			_deathEvent.Invoke ();
 			Destroy (gameObject);
 		}
